@@ -39,6 +39,9 @@ public class PersistentStorage implements ModInitializer {
 
 			BufferedReader inputStream = Files.newBufferedReader(STORAGE_FILE);
 			JSON = JsonParser.parseReader(inputStream).getAsJsonObject();
+			if (!JSON.has("tags")) {
+				put("tags", new JsonArray());
+			}
 			TAGS = JSON.get("tags").getAsJsonArray();
 		} catch (IOException ignored) {
 			ignored.printStackTrace();
@@ -66,8 +69,8 @@ public class PersistentStorage implements ModInitializer {
 	}
 
 	public static boolean getBoolean(String key) {
-		if (PersistentStorage.get(key) != null) {
-			return PersistentStorage.get(key).getAsBoolean();
+		if (get(key) != null && get(key).getAsJsonPrimitive().isBoolean()) {
+			return get(key).getAsBoolean();
 		}
 		return false;
 	}
